@@ -27,7 +27,7 @@ namespace BTG.ITPrice.Challenge.API
             services.AddControllers();
             services.AddRefitClient<object>().ConfigureHttpClient(c =>
             {
-                c.BaseAddress = new Uri("http://localhost:3000/");
+                c.BaseAddress = new Uri("https://api.github.com/");
             });
 
             services.AddSwaggerGen(c =>

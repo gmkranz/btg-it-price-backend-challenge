@@ -18,6 +18,7 @@ services:
       DatabaseUser: "postgres"
       DatabasePassword: "root"
       DatabaseName: "btgchallengeapplication"
+      BaseAddress: "https://api.github.com/"
     ports:
       - "5015:80"
     depends_on:

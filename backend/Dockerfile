@@ -5,6 +5,8 @@ COPY . ./
 
 RUN dotnet tool install --global dotnet-ef
 
+RUN dotnet test
+
 RUN dotnet restore
 
 RUN dotnet publish -c Release -o out

@@ -12,10 +12,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Refit;
 using System;
+using System.Text.Json.Serialization;
 
 namespace BTG.ITPrice.Challenge.API
 {
@@ -32,31 +31,54 @@ namespace BTG.ITPrice.Challenge.API
         {
 
             services.AddControllers();
+
+            services.AddEndpointsApiExplorer();
+            services.AddSwaggerGen();
+            services.AddControllersWithViews()
+                .AddJsonOptions(options =>
+                    {
+                        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                    });
+
             services.AddScoped<IGithubReposService, GithubReposService>();
             services.AddScoped<IGithubReposRepository, GithubReposRepository>();
 
-            services.AddDbContext<DatabaseContext>(
-                options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
-    );
+            var server = Configuration["DatabaseServer"] ?? "";
+            var port = Configuration["DatabasePort"] ?? "";
+            var user = Configuration["DatabaseUser"] ?? "";
+            var password = Configuration["DatabasePassword"] ?? "";
+            var databaseName = Configuration["DatabaseName"] ?? "";
 
+            var connectionString = Configuration.GetConnectionString("Main");
+
+            if (!string.IsNullOrEmpty(server) &&
+                !string.IsNullOrEmpty(port) &&
+                !string.IsNullOrEmpty(user) &&
+                !string.IsNullOrEmpty(password) &&
+                !string.IsNullOrEmpty(databaseName))
+            {
+                connectionString = $"Server={server};Database={databaseName};Port={port};User Id={user};Password={password}";
+            }
+    
+            services.AddDbContext<DatabaseContext>(
+                options => options.UseNpgsql(connectionString)
+            );
 
             services.AddRefitClient<IGithubAPIRepository>().ConfigureHttpClient(c =>
             {
                 c.BaseAddress = new Uri("https://api.github.com/");
             });
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Btg-It-Price", Version = "v1" });
-            });
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Btg-It-Price v1"));
+
+                app.UseSwaggerUI();
             }
 
             app.UseHttpsRedirection();

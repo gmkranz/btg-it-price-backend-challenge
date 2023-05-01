@@ -9,4 +9,12 @@
     <PackageReference Include="Refit" Version="6.3.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="DTOs\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Adapters\Data\Data.csproj" />
+  </ItemGroup>
+
 </Project>

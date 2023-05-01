@@ -1,10 +1,11 @@
-﻿using Application.Requests;
+﻿using Application.Entities;
+using Application.Requests;
 using Application.Services.Contracts;
 using BTG.ITPrice.Challenge.Infrastucture.Refit.Entities;
+using Domain.Entitites;
+using Domain.Ports;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Application.Services.Impl
@@ -12,6 +13,7 @@ namespace Application.Services.Impl
     public class GithubReposService : IGithubReposService
     {
         private readonly IGithubAPIRepository _repositoryRefit;
+        private readonly IGithubReposRepository _repository;
 
         private const int MAX_LANGUAGES = 5;
         //TODO: improve regex
@@ -21,10 +23,12 @@ namespace Application.Services.Impl
 
 
         public GithubReposService(
-            IGithubAPIRepository repositoryRefit
+            IGithubAPIRepository repositoryRefit,
+            IGithubReposRepository repository
             )
         {
             _repositoryRefit = repositoryRefit;
+            _repository = repository;
         }
 
         public async Task<GithubReposResponse> GetReposGithub(GithubRepoRequest request)
@@ -33,27 +37,61 @@ namespace Application.Services.Impl
 
             try
             {
-                var response = await _repositoryRefit.GetRepos(request.WordSearch,languagesQuery, request.PerPage.ToString(), request.Page.ToString());
-                if (response != null)
-                {
-                    return response;
-                }
-                else
-                {
-                    throw new Exception($"Failed to get Github repositories. Status code: {response}");
-                }
-      
+                var response = await _repositoryRefit.GetRepos(request.WordSearch, languagesQuery, request.PerPage.ToString(), request.Page.ToString());
+
+                await RepoDataPersistence(response.items);
+
+                return response;
+
 
             }
             catch (Exception ex)
             {
-                var res = ex;
+                //TODO: add error handling class
                 throw new Exception("Ocorreu um erro ao acessar a API do Github., Status code: { response.StatusCode }", ex);
 
             }
-            //throw new NotImplementedException();
         }
 
+        private async Task RepoDataPersistence(List<ItemsResponse> repoResponse)
+        {
+            List<GithubItemResponse> teste = Geto(repoResponse);
+
+            try
+            {
+                bool isCreated = await _repository.CreateSearchedRepos(teste);
+                if (!isCreated)
+                    //TODO: add error handling class
+                    throw new Exception("Não foi possível salvar as informações");
+
+            }
+            catch (Exception ex)
+            {
+                //TODO: add error handling class
+                throw new Exception("Ocorreu um erro ao acessar a API de replicação, Status code: { response.StatusCode }", ex);
+            }
+
+        }
+
+        private List<GithubItemResponse> Geto(List<ItemsResponse> repoResponse)
+        {
+            List<GithubItemResponse> githubItemResponseList = new();
+
+            foreach (var repo in repoResponse)
+            {
+                GithubItemResponse githubItemResponse = new();
+
+                githubItemResponse.Id = repo.Id;
+                githubItemResponse.Url = repo.Url;
+                githubItemResponse.Name = repo.Name;
+                githubItemResponse.Score = repo.Score;
+                githubItemResponse.Description = repo.Description;
+                githubItemResponse.Full_name = repo.Full_name;
+
+                githubItemResponseList.Add(githubItemResponse);
+            }
+            return githubItemResponseList;
+        }
 
         public static string StandardLanguageRequest(string languages)
         {
@@ -80,7 +118,6 @@ namespace Application.Services.Impl
                     query += OR_OPERATOR;
                 }
             }
-
             return query;
         }
 

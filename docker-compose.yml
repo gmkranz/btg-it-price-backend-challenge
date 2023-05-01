@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres:14.2-alpine
+    environment:
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: hublachallengeapplication
+    ports:
+      - "5432:5432"
+  backend:
+    build: ./backend/
+    environment:
+      DatabaseServer: "db"
+      DatabasePort: "5432"
+      DatabaseUser: "postgres"
+      DatabasePassword: "root"
+      DatabaseName: "hublachallengeapplication"
+    ports:
+      - "5015:80"
+    depends_on:
+      - db

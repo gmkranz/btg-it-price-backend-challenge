@@ -29,7 +29,6 @@ namespace BTG.ITPrice.Challenge.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
 
             services.AddEndpointsApiExplorer();
@@ -64,11 +63,11 @@ namespace BTG.ITPrice.Challenge.API
                 options => options.UseNpgsql(connectionString)
             );
 
+            var baseAddress = Configuration.GetConnectionString("BaseAddress");
             services.AddRefitClient<IGithubAPIRepository>().ConfigureHttpClient(c =>
             {
-                c.BaseAddress = new Uri("https://api.github.com/");
+                c.BaseAddress = new Uri(baseAddress);
             });
-
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

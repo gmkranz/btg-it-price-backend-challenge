@@ -42,8 +42,6 @@ namespace Application.Services.Impl
                 await RepoDataPersistence(response.items);
 
                 return response;
-
-
             }
             catch (Exception ex)
             {

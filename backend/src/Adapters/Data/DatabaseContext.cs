@@ -1,6 +1,5 @@
 ﻿using Domain.Entitites;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace Data;
 public class DatabaseContext : DbContext

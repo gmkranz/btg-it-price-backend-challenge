@@ -1,5 +1,6 @@
 ﻿
 
+using Application;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +26,7 @@ namespace BTG.ITPrice.Challenge.API
         {
 
             services.AddControllers();
-            services.AddRefitClient<object>().ConfigureHttpClient(c =>
+            services.AddRefitClient<IGithubAPIRepository>().ConfigureHttpClient(c =>
             {
                 c.BaseAddress = new Uri("https://api.github.com/");
             });

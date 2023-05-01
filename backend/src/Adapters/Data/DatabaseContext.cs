@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.Entitites;
+using Microsoft.EntityFrameworkCore;
 
 namespace Data;
 public class DatabaseContext : DbContext
@@ -8,6 +9,5 @@ public class DatabaseContext : DbContext
         this.Database.EnsureCreated();
     }
 
-//REFACT
-    public virtual DbSet<object> X => Set<object>();
+    public virtual DbSet<GithubItemResponse> GithubGitResponse => Set<GithubItemResponse>();
 }

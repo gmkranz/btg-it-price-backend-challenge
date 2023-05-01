@@ -21,17 +21,12 @@ namespace BTG.ITPrice.Challenge.API.Controllers
         }
 
         [HttpGet("by-languages")]
-        public async Task<ActionResult<IEnumerable<GithubReposResponse>>> Get([FromQuery]GithubRepoRequest githubReposRequest)
+        public async Task<ActionResult<GithubReposResponse>> Get([FromQuery]GithubRepoRequest githubReposRequest)
         {
             var response = await _service.GetReposGithub(githubReposRequest);
-            return Ok(new List<GithubReposResponse>());
+            return Ok(response);
         }
-        //[HttpGet("teste")]
-        //public  string Geet([FromQuery] GithubRepoRequest githubReposRequest)
-        //{
-        //    var response =  _service.GetReposGitheub(githubReposRequest);
-        //    return response;
-        //}
+ 
 
         [HttpGet]
         public async Task<string> d()

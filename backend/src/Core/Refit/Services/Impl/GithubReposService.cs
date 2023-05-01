@@ -27,22 +27,22 @@ namespace Application.Services.Impl
             _repositoryRefit = repositoryRefit;
         }
 
-        public async Task<IEnumerable<GithubReposResponse>> GetReposGithub(GithubRepoRequest request)
+        public async Task<GithubReposResponse> GetReposGithub(GithubRepoRequest request)
         {
             string languagesQuery = StandardLanguageRequest(request.Languages);
 
             try
             {
-                //var response = await _repositoryRefit.GetRepos(languagesQuery, request.PerPage.ToString(), request.Page.ToString());
-                //if (response != null)
-                //{
-                //    return response;
-                //}
-                //else
-                //{
-                //    throw new Exception($"Failed to get Github repositories. Status code: {response}");
-                //}
-                throw new Exception($"Failed to get Github repositories. Sta");
+                var response = await _repositoryRefit.GetRepos(request.WordSearch,languagesQuery, request.PerPage.ToString(), request.Page.ToString());
+                if (response != null)
+                {
+                    return response;
+                }
+                else
+                {
+                    throw new Exception($"Failed to get Github repositories. Status code: {response}");
+                }
+      
 
             }
             catch (Exception ex)

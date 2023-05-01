@@ -7,5 +7,5 @@ namespace Application.Services.Contracts;
 
 public interface IGithubReposService
 {
-    Task<IEnumerable<GithubReposResponse>> GetReposGithub(GithubRepoRequest request);
+    Task<GithubReposResponse> GetReposGithub(GithubRepoRequest request);
 }

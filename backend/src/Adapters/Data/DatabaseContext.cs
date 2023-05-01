@@ -10,5 +10,5 @@ public class DatabaseContext : DbContext
         this.Database.EnsureCreated();
     }
 
-    public virtual DbSet<List<GithubItemResponse>> GithubGitResponse => Set< List<GithubItemResponse>>();
+    public virtual DbSet<GithubItemResponse> GithubGitResponse => Set<GithubItemResponse>();
 }

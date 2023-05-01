@@ -19,9 +19,15 @@ namespace Data.Data.GithubReposRepository.Impl
 
         public async Task<bool> CreateSearchedRepos(List<GithubItemResponse> reposList)
         {
-             _databaseContext.GithubGitResponse.AddRange(reposList);
-             int isSave = await _databaseContext.SaveChangesAsync();
-            return isSave > 0;
+            //TODO Imp upsert method
+            try
+            {
+                _databaseContext.GithubGitResponse.AddRange(reposList);
+                int isSave = await _databaseContext.SaveChangesAsync();
+                return isSave > 0;
+            }
+            catch(Exception ex)
+            { return false; }
         }
     }
 }

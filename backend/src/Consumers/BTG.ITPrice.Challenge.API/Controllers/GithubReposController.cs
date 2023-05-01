@@ -26,12 +26,12 @@ namespace BTG.ITPrice.Challenge.API.Controllers
             var response = await _service.GetReposGithub(githubReposRequest);
             return Ok(new List<GithubReposResponse>());
         }
-        [HttpGet("teste")]
-        public  string Geet([FromQuery] GithubRepoRequest githubReposRequest)
-        {
-            var response =  _service.GetReposGitheub(githubReposRequest);
-            return response;
-        }
+        //[HttpGet("teste")]
+        //public  string Geet([FromQuery] GithubRepoRequest githubReposRequest)
+        //{
+        //    var response =  _service.GetReposGitheub(githubReposRequest);
+        //    return response;
+        //}
 
         [HttpGet]
         public async Task<string> d()

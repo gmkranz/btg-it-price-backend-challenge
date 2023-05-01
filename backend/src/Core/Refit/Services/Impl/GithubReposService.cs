@@ -2,6 +2,7 @@
 using Application.Services.Contracts;
 using BTG.ITPrice.Challenge.Infrastucture.Refit.Entities;
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -9,19 +10,45 @@ namespace Application.Services.Impl
 {
     public class GithubReposService : IGithubReposService
     {
+        private readonly IGithubAPIRepository _repositoryRefit;
+
         private const int MAX_LANGUAGES = 5;
         //TODO: improve regex
         private const string PATTERN_REGEX = @"[-&]+|&&?,";
         private const string PATTERN_REPLACE_REGEX = ",";
 
-
-        public Task<GithubReposResponse> GetReposGithub(GithubRepoRequest request)
+        public GithubReposService(
+            IGithubAPIRepository repositoryRefit
+            )
         {
-            string teste = StandardLanguageRequest(request.Languages);
-
-            throw new NotImplementedException();
+            _repositoryRefit = repositoryRefit;
         }
 
+        public async Task<IEnumerable<GithubReposResponse>> GetReposGithub(GithubRepoRequest request)
+        {
+            string languagesQuery = StandardLanguageRequest(request.Languages);
+
+            try
+            {
+                var response = await _repositoryRefit.GetRepos(languagesQuery, request.PerPage.ToString(), request.Page.ToString());
+                if (response != null)
+                {
+                    return response;
+                }
+                else
+                {
+                    throw new Exception($"Failed to get Github repositories. Status code: {response}");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                var res = ex;
+                throw new Exception("Ocorreu um erro ao acessar a API do Github., Status code: { response.StatusCode }", ex);
+
+            }
+            //throw new NotImplementedException();
+        }
 
 
         public static string StandardLanguageRequest(string languages)
@@ -34,39 +61,17 @@ namespace Application.Services.Impl
 
         public static void ValidateLanguagesRequest(string languages)
         {
-            // separa as linguagens por vírgula
             string[] languagesArray = languages.Split(",");
 
-            // se mais de 5 linguagens forem informadas, joga uma exceção
-
             IsMaxLanguagesRequest(languagesArray);
-            if (languagesArray.Length > MAX_LANGUAGES)
-            {
-                throw new ArgumentException("O número máximo de linguagens permitido é 5.");
-            }
-
-            // substitui os caracteres '-' e '&' por ','
-            for (int i = 0; i < languagesArray.Length; i++)
-            {
-                languagesArray[i] = languagesArray[i].Replace("-", ",").Replace("&", ",");
-            }
-
-            // junta as linguagens novamente em uma string separada por vírgula
-            languages = string.Join(",", languagesArray);
         }
 
-        private static void IsMaxLanguagesRequest(string[] languagesArray)
+        public static void IsMaxLanguagesRequest(string[] languagesArray)
         {
             if (languagesArray.Length > MAX_LANGUAGES)
 
                 throw new ArgumentException("O número máximo de linguagens permitido é 5.");
 
-        }
-
-        public string GetReposGitheub(GithubRepoRequest request)
-        {
-            string teste = StandardLanguageRequest(request.Languages);
-            return teste;
         }
     }
 }

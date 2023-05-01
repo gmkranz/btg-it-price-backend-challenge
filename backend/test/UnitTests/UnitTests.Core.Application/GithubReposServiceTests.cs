@@ -1,6 +1,7 @@
 ﻿using Application.Services.Impl;
 using AutoFixture;
 using NUnit.Framework;
+using System;
 
 namespace UnitTests.Core.Application
 {
@@ -21,15 +22,39 @@ namespace UnitTests.Core.Application
         [TestCase("JavaScript,", "JavaScript")]
         [TestCase("Python&Java", "Python,Java")]
         [TestCase("Go&Ruby&C++", "Go,Ruby,C++")]
-        public void StandardLanguageRequest_WithValidLanguages_ReturnsExpectedResult(string languages, string expected)
+        public void Should_StandardLanguageRequest_WithValidLanguages_ReturnsExpectedResult(string languages, string expected)
         {
-            // Arrange
             var service = _fixture.Create<GithubReposService>();
 
             var result = GithubReposService.StandardLanguageRequest(languages);
 
-            // Assert
             Assert.That(result, Is.EqualTo(expected));
+        }
+        [Test]
+        public void Should_IsMaxLanguagesRequest_WithTooManyLanguages_ThrowsArgumentException()
+        {
+            var languagesArray = new string[] { "C#", "JavaScript", "Python", "Java", "Go", "Ruby", "C++" };
+            var expectedMessage = "O número máximo de linguagens permitido é 5.";
+
+            var ex = Assert.Throws<ArgumentException>(() => GithubReposService.IsMaxLanguagesRequest(languagesArray));
+            Assert.That(ex.Message, Is.EqualTo(expectedMessage));
+        }
+
+        [TestCase("C#,Java,Python,Ruby,Go")]
+        [TestCase("C#,Java,Python,Ruby")]
+        [TestCase("C#,Java,Python")]
+        [TestCase("C#,Java")]
+        [TestCase("C#")]
+        public void Should_ValidateLanguagesRequest_WithValidLanguages_DoNotThrowException(string languages)
+        {
+            Assert.DoesNotThrow(() => GithubReposService.ValidateLanguagesRequest(languages));
+        }
+
+        [TestCase("C#,Java,Python,Ruby,Go,JavaScript")]
+        [TestCase("C#,Java,Python,Ruby,Go,JavaScript,C++")]
+        public void Should_ValidateLanguagesRequest_WithMoreThanFiveLanguages_ThrowsArgumentException(string languages)
+        {
+            Assert.Throws<ArgumentException>(() => GithubReposService.ValidateLanguagesRequest(languages));
         }
 
     }

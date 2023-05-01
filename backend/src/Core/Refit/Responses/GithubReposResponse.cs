@@ -1,7 +1,5 @@
 ﻿using Application.Entities;
-using System;
 using System.Collections.Generic;
-using static Application.Entities.ItemsResponse;
 
 namespace BTG.ITPrice.Challenge.Infrastucture.Refit.Entities
 {

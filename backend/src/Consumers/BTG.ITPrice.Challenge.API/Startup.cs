@@ -58,7 +58,7 @@ namespace BTG.ITPrice.Challenge.API
             {
                 connectionString = $"Server={server};Database={databaseName};Port={port};User Id={user};Password={password}";
             }
-    
+
             services.AddDbContext<DatabaseContext>(
                 options => options.UseNpgsql(connectionString)
             );

@@ -22,9 +22,7 @@
 //    }
 //}
 using BTG.ITPrice.Challenge.Infrastucture.Refit.Entities;
-using Microsoft.AspNetCore.Mvc;
 using Refit;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Application

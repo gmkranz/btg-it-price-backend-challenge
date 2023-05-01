@@ -2,7 +2,6 @@
 using Application.Requests;
 using Application.Services.Contracts;
 using BTG.ITPrice.Challenge.Infrastucture.Refit.Entities;
-using Data;
 using Domain.Entitites;
 using Domain.Exceptions;
 using Domain.Ports;
@@ -63,13 +62,11 @@ namespace Application.Services.Impl
 
             if (newDatas.Count > 0)
                 await RepoDataPersistence(newDatas);
-
-
         }
 
         private async Task RepoDataPersistence(List<ItemsResponse> repoResponse)
         {
-            List<GithubItemResponse> validityItems = Geto(repoResponse);
+            List<GithubItemResponse> validityItems = DataProcessing(repoResponse);
 
             try
             {
@@ -86,7 +83,7 @@ namespace Application.Services.Impl
 
         }
 
-        private List<GithubItemResponse> Geto(List<ItemsResponse> repoResponse)
+        private static List<GithubItemResponse> DataProcessing(List<ItemsResponse> repoResponse)
         {
             List<GithubItemResponse> githubItemResponseList = new();
 

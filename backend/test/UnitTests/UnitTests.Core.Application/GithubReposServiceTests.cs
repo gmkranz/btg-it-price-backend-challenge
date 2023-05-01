@@ -9,6 +9,7 @@ namespace UnitTests.Core.Application
     [TestOf(typeof(GithubReposServiceTests))]
     public class GithubReposServiceTests
     {
+        //TODO: finish unit tests
         IFixture _fixture;
 
         [SetUp]
@@ -51,6 +52,5 @@ namespace UnitTests.Core.Application
         {
             Assert.Throws<ArgumentException>(() => GithubReposService.ValidateLanguagesRequest(languages));
         }
-
     }
 }

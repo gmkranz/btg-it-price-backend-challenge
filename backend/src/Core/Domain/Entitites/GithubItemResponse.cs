@@ -2,7 +2,7 @@
 {
     //TODO: add other properties
 
-    public class GithubItemResponse 
+    public class GithubItemResponse
     {
         public int Id { get; set; }
         public string? Name { get; set; }

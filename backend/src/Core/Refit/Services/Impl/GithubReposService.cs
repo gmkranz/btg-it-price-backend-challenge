@@ -4,6 +4,7 @@ using Application.Services.Contracts;
 using BTG.ITPrice.Challenge.Infrastucture.Refit.Entities;
 using Data;
 using Domain.Entitites;
+using Domain.Exceptions;
 using Domain.Ports;
 using Refit;
 using System;
@@ -53,7 +54,7 @@ namespace Application.Services.Impl
             }
             catch (ApiException ex)
             {
-                throw new Exception($"Ocorreu um erro ao acessar a API do Github. Status code: {ex.StatusCode}", ex);
+                throw new InvalidFileException("Ocorreu um erro ao acessar o Github API.");
             }
         }
         private async Task Upsert(GithubReposResponse response, List<GithubItemResponse> oldDatas)
@@ -68,20 +69,19 @@ namespace Application.Services.Impl
 
         private async Task RepoDataPersistence(List<ItemsResponse> repoResponse)
         {
-            List<GithubItemResponse> teste = Geto(repoResponse);
+            List<GithubItemResponse> validityItems = Geto(repoResponse);
 
             try
             {
-                bool isCreated = await _repository.CreateSearchedRepos(teste);
+                bool isCreated = await _repository.CreateSearchedRepos(validityItems);
                 if (!isCreated)
                     //TODO: add error handling class
-                    throw new Exception("Não foi possível salvar as informações");
-
+                    throw new InvalidFileException("Não foi possível salvar as informações.");
             }
             catch (Exception ex)
             {
                 //TODO: add error handling class
-                throw new Exception("Ocorreu um erro ao acessar a API de replicação, Status code: { response.StatusCode }", ex);
+                throw new InvalidFileException("Ocorreu um erro ao acessar a API de replicação.");
             }
 
         }

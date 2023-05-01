@@ -3,13 +3,16 @@
 using Application;
 using Application.Services.Contracts;
 using Application.Services.Impl;
+using Data;
 using Data.Data.GithubReposRepository.Impl;
 using Domain.Ports;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Refit;
 using System;
@@ -25,13 +28,17 @@ namespace BTG.ITPrice.Challenge.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllers();
             services.AddScoped<IGithubReposService, GithubReposService>();
             services.AddScoped<IGithubReposRepository, GithubReposRepository>();
+
+            services.AddDbContext<DatabaseContext>(
+                options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+    );
+
 
             services.AddRefitClient<IGithubAPIRepository>().ConfigureHttpClient(c =>
             {
@@ -43,8 +50,6 @@ namespace BTG.ITPrice.Challenge.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Btg-It-Price", Version = "v1" });
             });
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())

@@ -29,6 +29,6 @@ You can access http://localhost:5015/swagger/index.html
 to see a swagger documentation of the API
 
 ## Note
-Open issues for improvements here:
+Open issues for improvements here: [issues](https://github.com/gmkranz/btg-it-price-backend-challenge/issues/13). 
 
 

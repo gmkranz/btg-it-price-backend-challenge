@@ -2,10 +2,13 @@
 using Application.Requests;
 using Application.Services.Contracts;
 using BTG.ITPrice.Challenge.Infrastucture.Refit.Entities;
+using Data;
 using Domain.Entitites;
 using Domain.Ports;
+using Refit;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Application.Services.Impl
@@ -37,18 +40,30 @@ namespace Application.Services.Impl
 
             try
             {
-                var response = await _repositoryRefit.GetRepos(request.WordSearch, languagesQuery, request.PerPage.ToString(), request.Page.ToString());
+                var responseTask = _repositoryRefit.GetRepos(request.WordSearch, languagesQuery, request.PerPage.ToString(), request.Page.ToString());
+                var oldDatasTask = _repository.GetAllSearchedRepos();
 
-                await RepoDataPersistence(response.items);
+                await Task.WhenAll(responseTask, oldDatasTask);
 
+                var response = await responseTask;
+                var oldDatas = await oldDatasTask;
+
+                await Upsert(response, oldDatas);
                 return response;
             }
-            catch (Exception ex)
+            catch (ApiException ex)
             {
-                //TODO: add error handling class
-                throw new Exception("Ocorreu um erro ao acessar a API do Github., Status code: { response.StatusCode }", ex);
-
+                throw new Exception($"Ocorreu um erro ao acessar a API do Github. Status code: {ex.StatusCode}", ex);
             }
+        }
+        private async Task Upsert(GithubReposResponse response, List<GithubItemResponse> oldDatas)
+        {
+            var newDatas = response.items.Where(item => !oldDatas.Any(oldItem => oldItem.Id == item.Id)).ToList();
+
+            if (newDatas.Count > 0)
+                await RepoDataPersistence(newDatas);
+
+
         }
 
         private async Task RepoDataPersistence(List<ItemsResponse> repoResponse)

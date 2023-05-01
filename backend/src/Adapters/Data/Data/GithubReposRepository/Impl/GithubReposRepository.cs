@@ -1,9 +1,8 @@
 ﻿using Domain.Entitites;
 using Domain.Ports;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Data.Data.GithubReposRepository.Impl
@@ -28,6 +27,11 @@ namespace Data.Data.GithubReposRepository.Impl
             }
             catch(Exception ex)
             { return false; }
+        }
+
+        public async Task<List<GithubItemResponse>> GetAllSearchedRepos()
+        {
+            return await _databaseContext.GithubGitResponse.ToListAsync();
         }
     }
 }

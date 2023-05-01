@@ -7,5 +7,8 @@ namespace Domain.Ports
     public interface IGithubReposRepository
     {
         Task<bool> CreateSearchedRepos(List<GithubItemResponse> reposList);
+
+        Task<List<GithubItemResponse>> GetAllSearchedRepos();
+
     }
 }

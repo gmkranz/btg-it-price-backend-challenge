@@ -1,10 +1,14 @@
 
-# Btg IT Price Challenge
+# Github API Case
 
 A web application to show and save sales using .NET 6
 
 ##About
-API to consume data from the Github API and persist it in the database according to business rules.
+API to consume data from the Github API and persist it in the database according to business rules:
+
+a) Fetch and store the top repositories for 5 languages of your choice;
+b) List the repositories found;
+c) View the details of each repository.
 
 ## Installation and Run
 

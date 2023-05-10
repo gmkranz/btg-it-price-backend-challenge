@@ -1,8 +1,4 @@
-<p align="center">
-  <img src="logo.png" alt="Logo Graziela Kranz Backend" width="180">
-</p>
-
-<h1 align="center">Github API Case</h1>
+# Github API Case
 
 A web application to show and save sales using .NET 6
 
